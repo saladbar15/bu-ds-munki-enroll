@@ -20,7 +20,7 @@ if [ "$NAMEFIELDS" == "3" ]; then
 	# Name does not include a sub-tla.
 
 	TLA=$( echo "$HOSTNAME" | awk -F "-" '{ print $1 }' )
-	SUBTLA=
+	SUBTLA=""
 	TYPE=$( echo "$HOSTNAME" | awk -F "-" '{ print $2 }' )
 
 elif [ "$NAMEFIELDS" == "4" ]; then
@@ -48,7 +48,7 @@ if [ "$TYPE" == "ML" ]; then
 
 	CHASSIS="laptop"
 
-elif [ "$CHASSIS" == "MD" ]; then
+elif [ "$TYPE" == "MD" ]; then
 
 	CHASSIS="desktop"
 
@@ -65,6 +65,7 @@ if [ ! -z "$PINGTEST" ]; then
   CURL="/usr/bin/curl"
 
   $CURL --max-time 5 --silent --get \
+      --user "user:pass" \
       -d hostname="$HOSTNAME" \
       -d tla="$TLA" \
       -d subtla="$SUBTLA" \
