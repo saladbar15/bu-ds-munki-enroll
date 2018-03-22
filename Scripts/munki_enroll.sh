@@ -67,8 +67,8 @@ if [ ! -z "$PINGTEST" ]; then
   $CURL --max-time 5 --silent --get \
       -d hostname="$HOSTNAME" \
       -d tla="$TLA" \
-			$(if [ -n "$SUBTLA" ]; then echo "-d $SUBTLA"; fi) \
-			$(if [ -n "$CHASSIS" ]; then echo "-d $CHASSIS"; fi) \
+      -d subtla="$SUBTLA" \
+      -d chassis="$CHASSIS" \
       "$SUBMITURL"
 
 	exit 0
