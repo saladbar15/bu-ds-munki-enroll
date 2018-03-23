@@ -1,59 +1,54 @@
-# Munki Enroll
+
+# (BU Desktop Services) Munki Enroll
 
 A set of scripts to automatically enroll clients in Munki, allowing for a very flexible manifest structure.
+Forked from [edingc/munki-enroll](https://github.com/edingc/munki-enroll)
 
 ## Why Munki Enroll?
 
-My organization has a very homogenous environment consisting of several identical deployments. We deploy machines with a basic manifest, like "room_28". This works wonderfully, until computer three in room 28 needs a special piece of software.
+Our organization has a very intricate support structure. We support many units, which may or may not have sub-units, and each of those units may request different policies, printers, and packages. Munki Enroll allows us to use our department's standard naming convention (TLA[-SUBTLA]-CHASSIS-####) to inform our `included_manifest` structure. Informed by our AD OU design (ORG/TLA[/SUBTLA]/CHASSIS/), Munki Enroll creates a structure that allows us apply policies at the organization level, unit level, sub-unit level, chassis level, and individually. Best of all, we have field technicians bulk-enroll without needed to manually create a manifest structure.
 
-Munki Enroll allows us this flexibility. A computer is deployed with a generic manifest, and Munki Enroll changes the manifest to a specific manifest. The new specific manifest contains the generic manifest as an included_manifests key, allowing us to easily target the whole lab and each individual computer.
-
-### Wait, Doesn't Munki Do This Already?
-
-Munki can target systems based on hostnames or serial numbers. However, each manifest must be created by hand. Munki Enroll allows us to create specific manifests automatically, and to allow them to contain a more generic manifest for large-scale software management.
+### Can this work for me?
+Without heavy customization, probably not. These scripts assume that the computer's name follows a specific, standard format used in our organization. 
 
 ## Installation
 
-Munki Enroll requires PHP version 5.3 or higher to be working on the webserver hosting your Munki repository.
+Installation follows the same procedure as [edingc/munki-enroll](https://github.com/edingc/munki-enroll)
 
-Copy the "munki-enroll" folder to the root of your Munki repository (the same directory as pkgs, pkginfo, manifests and catalogs). 
-
-Ensure your webserver owns and can write to the Munki repository (this may vary a litte based on your environment):
-
-`chmod -R a+rX,g+w /var/www/html/munki_repo`
-
-`chown -R apache:apache /var/www/html/munki_repo`
-
-Some Linux distributions do not include `php-xml` in the default PHP install. Install using the package manager of your chosen distribution, for example:
-
-`apt-get install php-xml`
-
-`yum install php-xml`
-
-That's it! Be sure to make note of the full URL path to the enroll.php file.
+Be sure to make note of the full URL path to the enroll.php file.
 
 ## Example manifest organization
 
-A simple example of manifest organization in Munki Enroll is shown below:
+An example of our manifest structure is shown below:
 
     . /manifests
     ├── default (Software for all computers goes here.)
-    ├── locationA
-    │   ├── A_default (Software for locationA computers goes here. Includes default manifest.)
-    │   └── clients
-    │       └── computer1 (Software for computer1 goes here. Includes A_default manifest, which includes default manifest.)
-    └── locationB
-        ├── B_default (Software for locationB computers goes here. Includes default manifest.)
-        └── clients
-            └── computer2 (Software for computer2 goes here. Includes A_default manifest, which includes default manifest.)
+    ├── TLA
+    │   ├── TLA-default
+    │   └── laptop
+    │       └── TLA-laptop_default
+    |		└──	clients
+    |			└──	TLA-ML-####
+    │   └── desktop
+    │       └── TLA-desktop_default
+    |		└──	clients
+    |			└──	TLA-MD-####
+    └── TLA2
+	|	├── TLA2_default
+    │   ├── SUBTLA
+    │       └── TLA-SUBTLA-default
+    |		└──	laptop
+    |			└──	TLA-SUBTLA-laptop_default
+    |			└──	clients
+    |				└──	TLA-SUB-ML-####
+    |		└──	desktop
+    |			└──	TLA-SUBTLA-desktop_default
+    |			└──	clients
+    |				└──	TLA-SUB-MD-####
+    │   ├── SUBTLA2
+    |		└──	etc...
 
-The `default`, `A_default`, and `B_default` manifests would be manually created. Computer1 would be provisioned with its ClientIdentifier set to `locationA/A_default`. Munki Enroll would then be run on the computer to generate the `computer1` manifest in the clients folder under locationA. The computer1 manifest contains the A_default manifest, which contains the default manifest.
-
-### Deploying packages
-
-The default manifest might contain web browsers or other applications needed on all computers. The A_default manifest would contain location-specific packages, while the computer1 manifest would contain computer-specific packages.
-
-This organization makes it extremely easy to target a bunch of computers or only one depending on needs.
+Munki Enroll will automatically create our default manifests and folder structures as required. Technicians will need to populate them as requests arise, but the structure will be ready for when it is needed.
 
 ## Client Configuration
 
@@ -65,11 +60,7 @@ The included munki_enroll.sh script can be executed in any number of ways (Termi
 
 ## Caveats
 
-Munki Enroll originally lacked error checking. Thanks to some generous code contributions, it now has some error checking. It worked fine without checking in my environment, but your mileage may vary.
-
-**It is required that the Munki client have a ClientIdentifier set before running the munki_enroll.sh script.** If you do not have a default ClientIdentifier/manifest specified, munki-enroll will fail to create your specific manifest.
-
-Your web server must have access to write to your Munki repository. I suggest combining SSL and Basic Authentication (you're doing this anyway, right?) on your Munki repository to help keep nefarious things out. To do this, edit the CURL command in munki_enroll.sh to include the following flag:
+When using Basic Authentication, edit the CURL command in munki_enroll.sh to include the following flag:
 
 	--user "USERNAME:PASSWORD" 
 
