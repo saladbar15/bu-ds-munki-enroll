@@ -17,6 +17,11 @@ $tla        = $_GET["tla"];
 $subtla     = $_GET["subtla"];
 $chassis    = $_GET["chassis"];
 
+// Check if hostname is present. If not, end.
+if(empty($hostname)) {
+  exit("Hostname not defined. Stopping.");
+}
+
 // debug output
 echo "Computer hostname is: " . $hostname . PHP_EOL;
 echo "Computer belongs to: " . $tla . PHP_EOL;
