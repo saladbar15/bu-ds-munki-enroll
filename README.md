@@ -27,24 +27,24 @@ An example of our manifest structure is shown below:
     │   ├── TLA-default
     │   └── laptop
     │       └── TLA-laptop_default
-    |		└──	clients
-    |			└──	TLA-ML-####
+    |		└── clients
+    |		     └── TLA-ML-####
     │   └── desktop
     │       └── TLA-desktop_default
-    |		└──	clients
-    |			└──	TLA-MD-####
+    |		└── clients
+    |		     └── TLA-MD-####
     └── TLA2
-	|	├── TLA2_default
+    |	├── TLA2_default
     │   ├── SUBTLA
     │       └── TLA-SUBTLA-default
-    |		└──	laptop
-    |			└──	TLA-SUBTLA-laptop_default
-    |			└──	clients
-    |				└──	TLA-SUB-ML-####
-    |		└──	desktop
-    |			└──	TLA-SUBTLA-desktop_default
-    |			└──	clients
-    |				└──	TLA-SUB-MD-####
+    |		└── laptop
+    |		     └── TLA-SUBTLA-laptop_default
+    |		     └── clients
+    |		          └── TLA-SUB-ML-####
+    |		└── desktop
+    |		     └── TLA-SUBTLA-desktop_default
+    |		          └── clients
+    |		               └── TLA-SUB-MD-####
     │   ├── SUBTLA2
     |       └──	etc...
 
