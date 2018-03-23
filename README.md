@@ -46,7 +46,7 @@ An example of our manifest structure is shown below:
     |			└──	clients
     |				└──	TLA-SUB-MD-####
     │   ├── SUBTLA2
-    |		└──	etc...
+    |       └──	etc...
 
 Munki Enroll will automatically create our default manifests and folder structures as required. Technicians will need to populate them as requests arise, but the structure will be ready for when it is needed.
 
