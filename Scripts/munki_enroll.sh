@@ -22,6 +22,7 @@ if [ "$NAMEFIELDS" == "3" ]; then
 	TLA=$( echo "$HOSTNAME" | awk -F "-" '{ print $1 }' )
 	SUBTLA=""
 	TYPE=$( echo "$HOSTNAME" | awk -F "-" '{ print $2 }' )
+	SUBTLA_PATH=
 
 elif [ "$NAMEFIELDS" == "4" ]; then
 
@@ -30,6 +31,7 @@ elif [ "$NAMEFIELDS" == "4" ]; then
 	TLA=$( echo "$HOSTNAME" | awk -F "-" '{ print $1 }' )
 	SUBTLA=$( echo "$HOSTNAME" | awk -F "-" '{ print $2 }' )
 	TYPE=$( echo "$HOSTNAME" | awk -F "-" '{ print $3 }' )
+	SUBTLA_PATH="${SUBTLA}/"
 
 else
 
@@ -43,14 +45,17 @@ fi
 # in that case.
 
 CHASSIS=
+CHASSIS_PATH=
 
 if [ "$TYPE" == "ML" ]; then
 
 	CHASSIS="laptop"
+	CHASSIS_PATH="${CHASSIS}/"
 
 elif [ "$TYPE" == "MD" ]; then
 
 	CHASSIS="desktop"
+	CHASSIS_PATH="${CHASSIS}/"
 
 fi
 
@@ -71,6 +76,12 @@ if [ ! -z "$PINGTEST" ]; then
       -d subtla="$SUBTLA" \
       -d chassis="$CHASSIS" \
       "$SUBMITURL"
+
+	# We're using a folder based manifest structure, so we'll need to write
+	# the ClientIdentifier manually. Otherwise, Munki will never find it when
+	# checking in.
+
+	defaults write /Library/Preferences/ManagedInstalls ClientIdentifier "$TLA/${SUBTLA_PATH}${CHASSIS_PATH}clients/$HOSTNAME"
 
 	exit 0
 
